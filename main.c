@@ -18,7 +18,7 @@ char *builtin_str[] = {
     "exit"
 };
 
-int (*builtin_func[]) (char**) = {
+int (*builtin_func[])(char**) = {
     &namsh_cd,
     &namsh_help,
     &namsh_exit
@@ -50,8 +50,7 @@ int namsh_help(char** args)
 {
     int i;
     printf("Nam's namsh\n");
-    printf("Type program names and arguments, and hit enter.\n");
-    printf("The following are built in:\n");
+    printf("The followings are built in:\n");
 
     for (i = 0; i < namsh_num_builtins(); i++) 
     {
