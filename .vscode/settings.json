@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "cstdlib": "c",
+        "unistd.h": "c",
+        "__node_handle": "c"
+    }
+}
