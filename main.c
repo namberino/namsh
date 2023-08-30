@@ -49,7 +49,7 @@ int namsh_cd(char** args)
 int namsh_help(char** args)
 {
     int i;
-    printf("Nam's namsh\n");
+    printf("Nam's namsh\n\n");
     printf("The followings are built in:\n");
 
     for (i = 0; i < namsh_num_builtins(); i++) 
@@ -57,7 +57,7 @@ int namsh_help(char** args)
         printf("  %s\n", builtin_str[i]);
     }
 
-    printf("Use the man command for information on other programs.\n");
+    printf("\nUse the man command for information on other programs.\n");
     return 1;
 }
 
