@@ -49,6 +49,7 @@ int namsh_cd(char** args)
 int namsh_help(char** args)
 {
     int i;
+
     printf("Nam's namsh\n\n");
     printf("The followings are built in:\n");
 
@@ -58,6 +59,7 @@ int namsh_help(char** args)
     }
 
     printf("\nUse the man command for information on other programs.\n");
+
     return 1;
 }
 
