@@ -113,6 +113,7 @@ int namsh_execute(char** args)
         }
     }
 
+    // if function is not a builtin function
     return namsh_launch(args);
 }
 
