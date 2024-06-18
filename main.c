@@ -126,7 +126,7 @@ int namsh_execute(char** args)
 char* namsh_read_line()
 {
     char* line = NULL;
-    int bufsize = 0;
+    size_t bufsize = 0;
 
     if (getline(&line, &bufsize, stdin) == -1)
     {
