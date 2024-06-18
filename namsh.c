@@ -80,7 +80,7 @@ int namsh_launch(char** args)
         // Child process
         if (execvp(args[0], args) == -1) // 1st one is the program name
         {
-            perror("namsh: exec call error");
+            fprintf(stderr, "namsh: command not found\n");
         }
         
         exit(EXIT_FAILURE);
@@ -88,7 +88,7 @@ int namsh_launch(char** args)
     else if (pid < 0) 
     {
         // forking error
-        perror("namsh: forking error");
+        fprintf(stderr, "namsh: cannot create new process\n");
     } 
     else 
     {
