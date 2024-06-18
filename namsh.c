@@ -8,26 +8,23 @@
 #define NAMSH_TOK_BUFSIZE 64 // token buffer
 #define NAMSH_TOK_DELIM " \t\r\n\a" // delimiters 
 
+// built in shell commands
 int namsh_cd(char** args);
 int namsh_help(char** args);
 int namsh_exit(char** args);
 
-char *builtin_str[] = {
+char* builtin_str[] = {
     "cd",
     "help",
     "exit"
 };
 
+// array of function pointers (that can take in an array of strings, which are args, and returns an int)
 int (*builtin_func[])(char**) = {
     &namsh_cd,
     &namsh_help,
     &namsh_exit
 };
-
-int namsh_num_builtins() 
-{
-    return sizeof(builtin_str) / sizeof(char *);
-}
 
 int namsh_cd(char** args)
 {
@@ -48,17 +45,15 @@ int namsh_cd(char** args)
 
 int namsh_help(char** args)
 {
-    int i;
-
     printf("Nam's namsh\n\n");
     printf("The followings are built in:\n");
 
-    for (i = 0; i < namsh_num_builtins(); i++) 
+    for (int i = 0; i < sizeof(builtin_str) / sizeof(char*); i++) 
     {
         printf("  %s\n", builtin_str[i]);
     }
 
-    printf("\nUse the man command for information on other programs.\n");
+    printf("\nUse the man command for information on other programs\n");
 
     return 1;
 }
