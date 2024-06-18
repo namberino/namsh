@@ -99,7 +99,7 @@ int namsh_launch(char** args)
 
 int namsh_execute(char** args)
 {
-    // if n empty command was entered
+    // if an empty command was entered
     if (args[0] == NULL) 
     {
         return 1;
@@ -109,7 +109,7 @@ int namsh_execute(char** args)
     {
         if (strcmp(args[0], builtin_str[i]) == 0) 
         {
-            return (*builtin_func[i])(args);
+            return (*builtin_func[i])(args); // calling the function
         }
     }
 
