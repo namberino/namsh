@@ -5,8 +5,8 @@
 #include <string.h>
 
 #define NAMSH_RL_BUFSIZE 1024 // readline buffer
-#define NAMSH_TOK_BUFSIZE 64
-#define NAMSH_TOK_DELIM " \t\r\n\a"
+#define NAMSH_TOK_BUFSIZE 64 // token buffer
+#define NAMSH_TOK_DELIM " \t\r\n\a" // delimiters 
 
 int namsh_cd(char** args);
 int namsh_help(char** args);
@@ -67,7 +67,6 @@ int namsh_exit(char** args)
 {
     return 0;
 }
-
 
 int namsh_launch(char** args)
 {
@@ -141,14 +140,15 @@ char* namsh_read_line()
         }
     }
 
-  return line;
+    return line;
 }
 
 char** namsh_split_line(char* line)
 {
-    int bufsize = NAMSH_TOK_BUFSIZE, position = 0;
-    char **tokens = malloc(bufsize * sizeof(char*));
-    char *token;
+    int bufsize = NAMSH_TOK_BUFSIZE;
+    int position = 0;
+    char** tokens = malloc(sizeof(char*) * bufsize);
+    char* token;
 
     if (!tokens) 
     {
@@ -166,7 +166,7 @@ char** namsh_split_line(char* line)
         if (position >= bufsize) 
         {
             bufsize += NAMSH_TOK_BUFSIZE;
-            tokens = realloc(tokens, bufsize * sizeof(char*));
+            tokens = realloc(tokens, sizeof(char*) * bufsize);
 
             if (!tokens) 
             {
@@ -175,7 +175,7 @@ char** namsh_split_line(char* line)
             }
         }
 
-        token = strtok(NULL, NAMSH_TOK_DELIM);
+        token = strtok(NULL, NAMSH_TOK_DELIM); // continue tokenizing the string
     }
 
     tokens[position] = NULL;
