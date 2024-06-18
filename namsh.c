@@ -48,12 +48,12 @@ int namsh_help(char** args)
     printf("Nam's namsh\n\n");
     printf("The followings are built in:\n");
 
-    for (int i = 0; i < sizeof(builtin_str) / sizeof(char*); i++) 
+    for (int i = 0; i < (sizeof(builtin_str) / sizeof(char*)); i++) 
     {
         printf("  %s\n", builtin_str[i]);
     }
 
-    printf("\nUse the man command for information on other programs\n");
+    printf("\nUse the \"man\" command for information on other programs\n");
 
     return 1;
 }
@@ -99,15 +99,13 @@ int namsh_launch(char** args)
 
 int namsh_execute(char** args)
 {
-    int i;
-
     // if n empty command was entered
     if (args[0] == NULL) 
     {
         return 1;
     }
 
-    for (i = 0; i < namsh_num_builtins(); i++) 
+    for (int i = 0; i < (sizeof(builtin_str) / sizeof(char*)); i++) 
     {
         if (strcmp(args[0], builtin_str[i]) == 0) 
         {
