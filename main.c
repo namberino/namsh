@@ -228,7 +228,10 @@ void namsh_loop()
 
 int main(int argc, char** argv)
 {
+    // main program loop
     namsh_loop();
+
+    // TODO: shut down and clean up the shell
 
     return EXIT_SUCCESS;
 }
