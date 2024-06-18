@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define NAMSH_RL_BUFSIZE 1024
+#define NAMSH_RL_BUFSIZE 1024 // readline buffer
 #define NAMSH_TOK_BUFSIZE 64
 #define NAMSH_TOK_DELIM " \t\r\n\a"
 
@@ -125,48 +125,23 @@ int namsh_execute(char** args)
 
 char* namsh_read_line()
 {
-    int bufsize = NAMSH_RL_BUFSIZE;
-    int position = 0;
-    char* buffer = malloc(sizeof(char) * bufsize);
-    int c;
+    char* line = NULL;
+    int bufsize = 0;
 
-    if (!buffer) 
+    if (getline(&line, &bufsize, stdin) == -1)
     {
-        fprintf(stderr, "namsh: allocation error\n");
-        exit(EXIT_FAILURE);
-    }
-
-    while (1)
-    {
-        // Read a character
-        c = getchar();
-
-        // If we hit EOF, replace it with a null character and return.
-        if (c == EOF || c == '\n') 
+        if (feof(stdin))
         {
-            buffer[position] = '\0';
-            return buffer;
+            exit(EXIT_SUCCESS);
         } 
         else 
         {
-            buffer[position] = c;
-        }
-
-        position++;
-
-        // If buffer exceeded, reallocate.
-        if (position >= bufsize) 
-        {
-            bufsize += NAMSH_RL_BUFSIZE;
-            buffer = realloc(buffer, bufsize);
-        
-            if (!buffer) 
-            {
-                fprintf(stderr, "namsh: allocation error\n");
-                exit(EXIT_FAILURE);
-            }
+            fprintf(stderr, "namsh: readline error\n");
+            exit(EXIT_FAILURE);
         }
     }
+
+  return line;
 }
 
 char** namsh_split_line(char* line)
