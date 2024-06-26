@@ -2,7 +2,7 @@ CC = /usr/bin/gcc
 
 C_SRC = $(wildcard src/*.c)
 HEADERS = $(wildcard headers/*.h)
-OBJ = obj/builtin.o obj/namsh.o
+OBJ = $(patsubst src/%.c, obj/%.o, $(C_SRC))
 
 CFLAGS = -Wall -Wextra -pedantic
 
