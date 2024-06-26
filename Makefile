@@ -1,11 +1,27 @@
 CC = /usr/bin/gcc
 
-compile: 
-	$(CC) namsh.c -o namsh
+C_SRC = $(wildcard src/*.c)
+HEADERS = $(wildcard headers/*.h)
+OBJ = obj/builtin.o obj/namsh.o
 
-run:
-	$(CC) namsh.c -o namsh
-	./namsh
+CFLAGS = -Wall -Wextra -pedantic
+
+run: compile
+	./bin/namsh
+
+compile: bin/namsh
+
+bin/namsh: $(OBJ) | bin
+	$(CC) -o $@ $(OBJ)
+
+bin:
+	mkdir -p bin
+
+obj/%.o: src/%.c | obj
+	${CC} -c $< -o $@
+
+obj:
+	mkdir -p obj
 
 clean:
-	rm -rf namsh
+	rm -rf bin/* obj/*.o
