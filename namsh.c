@@ -9,6 +9,14 @@
 #define NAMSH_TOK_BUFSIZE 64 // token buffer
 #define NAMSH_TOK_DELIM " \t\r\n\a" // delimiters 
 
+// ANSI color codes
+#define GREEN "\033[0;32m"
+#define BLUE "\033[0;34m"
+#define PURPLE "\033[0;35m"
+#define ANSI_BOLD "\033[1m"
+#define ANSI_UNDERLINE "\033[4m"
+#define ANSI_RESET "\033[0m"
+
 // built in shell commands
 int namsh_cd(char** args);
 int namsh_help(char** args);
@@ -180,11 +188,13 @@ char** namsh_split_line(char* line)
 
 void print_prompt()
 {
-    struct passwd* pw;
+    struct passwd* pw; // info about user account
     char cwd[1024];
     char* relative_cwd;
     char* home;
     char* username;
+    char* current_dir;
+    char relative_path[1024];
 
     // get cwd
     if (getcwd(cwd, sizeof(cwd)) != NULL)
@@ -194,21 +204,37 @@ void print_prompt()
         username = pw->pw_name;
         home = pw->pw_dir;
 
+        // get last directory name (current directory)
+        current_dir = strrchr(cwd, '/');
+        if (current_dir != NULL)
+            current_dir++; // remove the /
+        else
+            current_dir = cwd; // root directory
+
         // check if cwd starts with home
         if (strncmp(cwd, home, strlen(home)) == 0)
         {
-                // create the relative path
+                // create the relative path (by advancing the pointer)
                 relative_cwd = cwd + strlen(home);
 
                 if (relative_cwd[0] == '\0')
+                {
                     relative_cwd = "/";
+                }
+                else
+                {
+                    strncpy(relative_path, relative_cwd, current_dir - relative_cwd);
+                    relative_path[current_dir - relative_cwd] = '\0';
+                }
 
-                printf("%s@%s> ", username, relative_cwd);
+                printf("%s%s%s%s@%s%s%s%s%s> ", GREEN, ANSI_BOLD, username, PURPLE, BLUE, relative_path, BLUE, ANSI_BOLD, current_dir);
         }
         else
         {
-            printf("%s@%s> ", username, cwd);
+            printf("%s%s%s%s@%s%s%s%s%s> ", GREEN, ANSI_BOLD, username, PURPLE, BLUE, relative_cwd, BLUE, ANSI_BOLD, current_dir);
         }
+
+        printf(ANSI_RESET);
     }
     else
     {
