@@ -221,7 +221,7 @@ void print_prompt()
                 {
                     relative_cwd = "/";
                 }
-                else
+                else // create relative path
                 {
                     strncpy(relative_path, relative_cwd, current_dir - relative_cwd);
                     relative_path[current_dir - relative_cwd] = '\0';
