@@ -6,3 +6,6 @@ compile:
 run:
 	$(CC) namsh.c -o namsh
 	./namsh
+
+clean:
+	rm -rf namsh
