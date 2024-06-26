@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <pwd.h>
 
 #define NAMSH_RL_BUFSIZE 1024 // readline buffer
 #define NAMSH_TOK_BUFSIZE 64 // token buffer
@@ -177,6 +178,44 @@ char** namsh_split_line(char* line)
     return tokens;
 }
 
+void print_prompt()
+{
+    struct passwd* pw;
+    char cwd[1024];
+    char* relative_cwd;
+    char* home;
+    char* username;
+
+    // get cwd
+    if (getcwd(cwd, sizeof(cwd)) != NULL)
+    {
+        // get username and home directory
+        pw = getpwuid(getuid());
+        username = pw->pw_name;
+        home = pw->pw_dir;
+
+        // check if cwd starts with home
+        if (strncmp(cwd, home, strlen(home)) == 0)
+        {
+                // create the relative path
+                relative_cwd = cwd + strlen(home);
+
+                if (relative_cwd[0] == '\0')
+                    relative_cwd = "/";
+
+                printf("%s@%s> ", username, relative_cwd);
+        }
+        else
+        {
+            printf("%s@%s> ", username, cwd);
+        }
+    }
+    else
+    {
+        fprintf(stderr, "namsh: cannot get cwd");
+    }
+}
+
 void namsh_loop()
 {
     char* line;
@@ -185,7 +224,7 @@ void namsh_loop()
 
     do 
     {
-        printf("> ");
+        print_prompt();
 
         line = namsh_read_line();
         args = namsh_split_line(line);
