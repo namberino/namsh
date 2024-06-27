@@ -1,5 +1,5 @@
 CC = $(shell which gcc)
-CC = $(shell which clang) # fallback compiler
+CC ?= $(shell which clang) # fallback compiler
 
 C_SRC = $(wildcard src/*.c)
 HEADERS = $(wildcard headers/*.h)
