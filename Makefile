@@ -4,7 +4,7 @@ C_SRC = $(wildcard src/*.c)
 HEADERS = $(wildcard headers/*.h)
 OBJ = $(patsubst src/%.c, obj/%.o, $(C_SRC))
 
-CFLAGS = -Wall -Wextra -pedantic
+CFLAGS = -std=c17 -Wall -Wextra -pedantic
 
 run: compile
 	./bin/namsh
