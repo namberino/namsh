@@ -12,12 +12,12 @@ char* builtin_str[3] = {
 };
 
 int (*builtin_func[])(char**) = {
-    &namsh_cd,
-    &namsh_help,
-    &namsh_exit
+    &cmd_cd,
+    &cmd_help,
+    &cmd_exit
 };
 
-int namsh_cd(char** args)
+int cmd_cd(char** args)
 {
     if (args[1] == NULL) 
     {
@@ -34,7 +34,7 @@ int namsh_cd(char** args)
     return 1;
 }
 
-int namsh_help(char** args)
+int cmd_help(char** args)
 {
     printf("Nam's namsh\n\n");
     printf("The followings are built in:\n");
@@ -49,7 +49,7 @@ int namsh_help(char** args)
     return 1;
 }
 
-int namsh_exit(char** args)
+int cmd_exit(char** args)
 {
     return 0;
 }

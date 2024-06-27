@@ -1,9 +1,9 @@
 #ifndef BUILTIN_H
 #define BUILTIN_H
 
-int namsh_cd(char** args);
-int namsh_help(char** args);
-int namsh_exit(char** args);
+int cmd_cd(char** args);
+int cmd_help(char** args);
+int cmd_exit(char** args);
 
 extern char* builtin_str[3];
 

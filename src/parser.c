@@ -6,7 +6,7 @@
 #include "../headers/parser.h"
 #include "../headers/builtin.h"
 
-int namsh_launch(char** args)
+int launch_child_process(char** args)
 {
     pid_t pid, wpid;
     int status;
@@ -40,7 +40,7 @@ int namsh_launch(char** args)
     return 1; // signals the shell to prompt for input again
 }
 
-int namsh_execute(char** args)
+int execute_cmd(char** args)
 {
     // if an empty command was entered
     if (args[0] == NULL) 
@@ -57,10 +57,10 @@ int namsh_execute(char** args)
     }
 
     // if function is not a builtin function
-    return namsh_launch(args);
+    return launch_child_process(args);
 }
 
-char* namsh_read_line()
+char* shell_readline()
 {
     char* line = NULL;
     size_t bufsize = 0;
@@ -81,9 +81,9 @@ char* namsh_read_line()
     return line;
 }
 
-char** namsh_split_line(char* line)
+char** shell_splitline(char* line)
 {
-    int bufsize = NAMSH_TOK_BUFSIZE;
+    int bufsize = TOKEN_BUFSIZE;
     int position = 0;
     char** tokens = malloc(sizeof(char*) * bufsize);
     char* token;
@@ -94,7 +94,7 @@ char** namsh_split_line(char* line)
         exit(EXIT_FAILURE);
     }
 
-    token = strtok(line, NAMSH_TOK_DELIM);
+    token = strtok(line, TOKEN_DELIMS);
 
     while (token != NULL) 
     {
@@ -103,7 +103,7 @@ char** namsh_split_line(char* line)
 
         if (position >= bufsize) 
         {
-            bufsize += NAMSH_TOK_BUFSIZE;
+            bufsize += TOKEN_BUFSIZE;
             tokens = realloc(tokens, sizeof(char*) * bufsize);
 
             if (!tokens) 
@@ -113,7 +113,7 @@ char** namsh_split_line(char* line)
             }
         }
 
-        token = strtok(NULL, NAMSH_TOK_DELIM); // continue tokenizing the string
+        token = strtok(NULL, TOKEN_DELIMS); // continue tokenizing the string
     }
 
     tokens[position] = NULL;

@@ -65,7 +65,7 @@ void print_prompt()
     }
 }
 
-void namsh_loop()
+void shell_loop()
 {
     char* line;
     char** args;
@@ -75,9 +75,9 @@ void namsh_loop()
     {
         print_prompt();
 
-        line = namsh_read_line();
-        args = namsh_split_line(line);
-        status = namsh_execute(args);
+        line = shell_readline();
+        args = shell_splitline(line);
+        status = execute_cmd(args);
 
         free(line);
         free(args);
@@ -87,7 +87,7 @@ void namsh_loop()
 int main(int argc, char** argv)
 {
     // main program loop
-    namsh_loop();
+    shell_loop();
 
     // TODO: shut down and clean up the shell
 

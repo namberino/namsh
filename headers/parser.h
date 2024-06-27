@@ -2,13 +2,13 @@
 #define PARSER_H
 
 // token constants
-#define NAMSH_RL_BUFSIZE 1024 // readline buffer
-#define NAMSH_TOK_BUFSIZE 64 // token buffer
-#define NAMSH_TOK_DELIM " \t\r\n\a" // delimiters 
+#define RL_BUFSIZE 1024 // readline buffer
+#define TOKEN_BUFSIZE 64 // token buffer
+#define TOKEN_DELIMS " \t\r\n\a" // delimiters 
 
-int namsh_launch(char** args);
-int namsh_execute(char** args);
-char* namsh_read_line();
-char** namsh_split_line(char* line);
+int launch_child_process(char** args);
+int execute_cmd(char** args);
+char* shell_readline();
+char** shell_splitline(char* line);
 
 #endif
