@@ -1,5 +1,7 @@
-# namsh: The shell
+# namsh: The minimalist shell
 
-A very basic shell
+A custom shell written in C
 
-There are currently 3 builtin commands: cd, help, exit
+There are currently 3 builtin commands: `cd`, `help`, `exit`
+
+![shell](docs/img/shell.png)
