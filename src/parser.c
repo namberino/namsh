@@ -15,6 +15,8 @@ int launch_child_process(char** args)
 
     if (pid == 0) 
     {
+        log_history(args);
+
         // Child process
         if (execvp(args[0], args) == -1) // 1st one is the program name
         {
@@ -52,6 +54,7 @@ int execute_cmd(char** args)
     {
         if (strcmp(args[0], builtin_str[i]) == 0) 
         {
+            log_history(args);
             return (*builtin_func[i])(args); // calling the function
         }
     }

@@ -1,9 +1,13 @@
 #ifndef BUILTIN_H
 #define BUILTIN_H
 
+#define HISTORY_FILE ".namsh_history"
+
 int cmd_cd(char** args);
 int cmd_help(char** args);
 int cmd_exit(char** args);
+
+void log_history(char** args);
 
 extern char* builtin_str[3];
 

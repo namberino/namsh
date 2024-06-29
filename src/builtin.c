@@ -53,3 +53,30 @@ int cmd_exit(char** args)
 {
     return 0;
 }
+
+void log_history(char** args)
+{
+    char* home_dir = getenv("HOME");
+
+    if (home_dir == NULL)
+        fprintf(stderr, "Error: HOME environment variable not set.\n");
+
+    char history_path[1024];
+    snprintf(history_path, sizeof(history_path), "%s/%s", home_dir, HISTORY_FILE);
+
+    FILE* history_file = fopen(history_path, "a");
+    if (history_file == NULL)
+        perror("namsh: Error opening history file");
+
+    // concatenate all arguments into a single command string
+    char command[1024] = "";
+    for (int i = 0; args[i] != NULL; i++)
+    {
+        strcat(command, args[i]);
+        strcat(command, " ");
+    }
+
+    fprintf(history_file, "%s\n", command);
+
+    fclose(history_file);
+}
