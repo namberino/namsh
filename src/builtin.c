@@ -5,16 +5,18 @@
 
 #include "../headers/builtin.h"
 
-char* builtin_str[3] = {
+char* builtin_str[4] = {
     "cd",
     "help",
-    "exit"
+    "exit",
+    "history"
 };
 
 int (*builtin_func[])(char**) = {
     &cmd_cd,
     &cmd_help,
-    &cmd_exit
+    &cmd_exit,
+    &cmd_history
 };
 
 int cmd_cd(char** args)
@@ -52,6 +54,30 @@ int cmd_help(char** args)
 int cmd_exit(char** args)
 {
     return 0;
+}
+
+int cmd_history(char** args)
+{
+    char* home_dir = getenv("HOME");
+
+    if (home_dir == NULL)
+        fprintf(stderr, "namsh: HOME environment variable not set");
+
+    char history_path[1024];
+    snprintf(history_path, sizeof(history_path), "%s/%s", home_dir, HISTORY_FILE);
+
+    FILE* history_file = fopen(history_path, "r");
+    if (history_file == NULL)
+        perror("namsh: Error opening history file");
+
+    char line_buffer[1024];
+    
+    while (fgets(line_buffer, sizeof(line_buffer), history_file) != NULL)
+        printf("%s", line_buffer);
+
+    fclose(history_file);
+
+    return 1;
 }
 
 void log_history(char** args)
