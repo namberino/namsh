@@ -64,7 +64,28 @@ void log_history(char** args)
     char history_path[1024];
     snprintf(history_path, sizeof(history_path), "%s/%s", home_dir, HISTORY_FILE);
 
-    FILE* history_file = fopen(history_path, "a");
+    // open the file in read mode to get the last id
+    FILE* history_file = fopen(history_path, "r");
+    int last_id = 0;
+
+    if (history_file != NULL)
+    {
+        char line[1024];
+        while (fgets(line, sizeof(line), history_file) != NULL)
+        {
+            char* colon_pos = strchr(line, ':');
+
+            if (colon_pos != NULL)
+                last_id = atoi(line);
+        }
+        fclose(history_file);
+    }
+
+    // increment the id for the new command
+    int cmd_id = ++last_id;
+
+    // writing the command into the history file
+    history_file = fopen(history_path, "a");
     if (history_file == NULL)
         perror("namsh: Error opening history file");
 
@@ -76,7 +97,7 @@ void log_history(char** args)
         strcat(command, " ");
     }
 
-    fprintf(history_file, "%s\n", command);
+    fprintf(history_file, "%d:%s\n", cmd_id, command);
 
     fclose(history_file);
 }
