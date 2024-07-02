@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <strings.h>
 
-#include "../headers/parser.h"
-#include "../headers/builtin.h"
+#include "parser.h"
+#include "builtin.h"
 
 int launch_child_process(char** args)
 {
@@ -63,7 +63,7 @@ int execute_cmd(char** args)
     return launch_child_process(args);
 }
 
-char* shell_readline()
+char* shell_readline(void)
 {
     char* line = NULL;
     size_t bufsize = 0;

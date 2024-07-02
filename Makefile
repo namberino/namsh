@@ -5,7 +5,7 @@ C_SRC = $(wildcard src/*.c)
 HEADERS = $(wildcard headers/*.h)
 OBJ = $(patsubst src/%.c, obj/%.o, $(C_SRC))
 
-CFLAGS = -std=c17 -Wall -Wextra -pedantic
+CFLAGS = -std=c17 -Wall -pedantic -Iinclude
 
 run: compile
 	./bin/namsh
@@ -18,8 +18,8 @@ bin/namsh: $(OBJ) | bin
 bin:
 	mkdir -p bin
 
-obj/%.o: src/%.c | obj
-	${CC} -c $< -o $@
+obj/%.o: src/%.c $(HEADERS) | obj
+	${CC} $(CFLAGS) -c $< -o $@
 
 obj:
 	mkdir -p obj

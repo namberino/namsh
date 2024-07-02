@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "../headers/builtin.h"
+#include "builtin.h"
 
 char* builtin_str[4] = {
     "cd",

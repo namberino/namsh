@@ -4,13 +4,13 @@
 #include <strings.h>
 #include <unistd.h>
 
-#include "../headers/ansi.h"
+#include "ansi.h"
 
-void print_prompt()
+void print_prompt(void)
 {
     struct passwd* pw; // info about user account
     char cwd[1024];
-    char* relative_cwd;
+    char* relative_cwd = NULL;
     char* home;
     char* username;
     char* current_dir;

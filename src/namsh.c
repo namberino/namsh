@@ -3,9 +3,9 @@
 #include <stdio.h>
 #include <strings.h>
 
-#include "../headers/builtin.h"
-#include "../headers/parser.h"
-#include "../headers/util.h"
+#include "builtin.h"
+#include "parser.h"
+#include "util.h"
 
 void shell_loop()
 {
