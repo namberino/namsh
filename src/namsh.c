@@ -7,7 +7,7 @@
 #include "parser.h"
 #include "util.h"
 
-void shell_loop()
+void shell_loop(void)
 {
     char* line;
     char** args;

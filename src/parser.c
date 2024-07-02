@@ -8,7 +8,8 @@
 
 int launch_child_process(char** args)
 {
-    pid_t pid, wpid;
+    pid_t pid;
+    // pid_t wpid;
     int status;
 
     pid = fork(); // returns 0 to child process, returns pid of child to parent process
@@ -35,7 +36,8 @@ int launch_child_process(char** args)
         // parent process (wait for process to finish)
         do 
         {
-            wpid = waitpid(pid, &status, WUNTRACED);
+            // wpid = waitpid(pid, &status, WUNTRACED);
+            waitpid(pid, &status, WUNTRACED);
         } while (!WIFEXITED(status) && !WIFSIGNALED(status)); // wait till process is exited or killed
     }
 
