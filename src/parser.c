@@ -85,7 +85,7 @@ int execute_cmd(char** args)
 
 char* shell_readline(void)
 {
-    size_t bufsize = 1024;
+    size_t bufsize = RL_BUFSIZE;
     char* buffer = malloc(bufsize);
 
     if (!buffer)
@@ -94,7 +94,7 @@ char* shell_readline(void)
         exit(EXIT_FAILURE);
     }
 
-    size_t pos = 0;
+    size_t index = 0;
     char c;
 
     enable_raw_mode();
@@ -103,20 +103,19 @@ char* shell_readline(void)
     {
         c = getchar();
 
-        if (c == '\n')
+        if (c == '\n') // newline
         {
-            buffer[pos] = '\0';
+            buffer[index] = '\0';
             putchar('\n');
             break;
         }
-        else if (c == '\t')
+        else if (c == '\t') // tab
         {
-            // tab key handling: insert four spaces
-            if (pos + 4 >= bufsize)
+            if (index + 4 > bufsize)
             {
-                bufsize += 1024;
+                bufsize += RL_BUFSIZE;
                 buffer = realloc(buffer, bufsize);
-                
+
                 if (!buffer)
                 {
                     fprintf(stderr, "namsh: allocation error\n");
@@ -126,36 +125,40 @@ char* shell_readline(void)
 
             for (int i = 0; i < 4; i++)
             {
-                buffer[pos++] = ' ';
+                buffer[index++] = ' ';
                 putchar(' ');
             }
         }
-        else if (c == 127)
-        {  // backspace handling (ASCII 127)
-            if (pos > 0)
+        else if (c == 127) // backspace
+        {
+            if (index > 0)
             {
-                if (pos >= 4 && strncmp(&buffer[pos - 4], "    ", 4) == 0)
+                if (index >= 4 && strncmp(&buffer[index - 4], "    ", 4) == 0)
                 {
-                    pos -= 4;
+                    index -= 4;
 
                     for (int i = 0; i < 4; i++)
                     {
+                        // have to do this cuz \b just move the cursor back, it doesn't remove the character
+                        putchar('\b');
+                        putchar(' ');
                         putchar('\b');
                     }
                 }
                 else
                 {
-                    pos--;
-
+                    index--;
+                    putchar('\b');
+                    putchar(' ');
                     putchar('\b');
                 }
             }
         }
-        else
+        else // add character
         {
-            if (pos >= bufsize)
+            if (index > bufsize)
             {
-                bufsize += 1024;
+                bufsize += RL_BUFSIZE;
                 buffer = realloc(buffer, bufsize);
 
                 if (!buffer)
@@ -165,13 +168,13 @@ char* shell_readline(void)
                 }
             }
 
-            buffer[pos++] = c;
+            buffer[index++] = c;
             putchar(c);
         }
     }
 
     disable_raw_mode();
-    
+
     return buffer;
 }
 
