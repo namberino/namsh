@@ -8,7 +8,7 @@
 
 int launch_child_process(char** args);
 int execute_cmd(char** args);
-char* shell_readline();
+char* shell_readline(void);
 char** shell_splitline(char* line);
 
 #endif
