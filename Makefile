@@ -26,3 +26,5 @@ obj:
 
 clean:
 	rm -f bin/* obj/*.o
+
+.PHONY: run compile clean
