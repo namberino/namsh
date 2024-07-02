@@ -2,9 +2,27 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <strings.h>
+#include <termios.h>
+#include <sys/ioctl.h>
 
 #include "parser.h"
 #include "builtin.h"
+
+void enable_raw_mode(void)
+{
+    struct termios term;
+    tcgetattr(STDIN_FILENO, &term);
+    term.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
+
+void disable_raw_mode(void)
+{
+    struct termios term;
+    tcgetattr(STDIN_FILENO, &term);
+    term.c_lflag |= (ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
 
 int launch_child_process(char** args)
 {
@@ -67,23 +85,97 @@ int execute_cmd(char** args)
 
 char* shell_readline(void)
 {
-    char* line = NULL;
-    size_t bufsize = 0;
+    size_t bufsize = RL_BUFSIZE;
+    char* buffer = malloc(bufsize);
 
-    if (getline(&line, &bufsize, stdin) == -1)
+    if (!buffer)
     {
-        if (feof(stdin))
+        fprintf(stderr, "namsh: allocation error\n");
+        exit(EXIT_FAILURE);
+    }
+
+    size_t index = 0;
+    char c;
+
+    enable_raw_mode();
+
+    while (1)
+    {
+        c = getchar();
+
+        if (c == '\n') // newline
         {
-            exit(EXIT_SUCCESS);
-        } 
-        else 
+            buffer[index] = '\0';
+            putchar('\n');
+            break;
+        }
+        else if (c == '\t') // tab
         {
-            fprintf(stderr, "namsh: readline error\n");
-            exit(EXIT_FAILURE);
+            if (index + 4 > bufsize)
+            {
+                bufsize += RL_BUFSIZE;
+                buffer = realloc(buffer, bufsize);
+
+                if (!buffer)
+                {
+                    fprintf(stderr, "namsh: allocation error\n");
+                    exit(EXIT_FAILURE);
+                }
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                buffer[index++] = ' ';
+                putchar(' ');
+            }
+        }
+        else if (c == 127) // backspace
+        {
+            if (index > 0)
+            {
+                if (index >= 4 && strncmp(&buffer[index - 4], "    ", 4) == 0)
+                {
+                    index -= 4;
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        // have to do this cuz \b just move the cursor back, it doesn't remove the character
+                        putchar('\b');
+                        putchar(' ');
+                        putchar('\b');
+                    }
+                }
+                else
+                {
+                    index--;
+                    putchar('\b');
+                    putchar(' ');
+                    putchar('\b');
+                }
+            }
+        }
+        else // add character
+        {
+            if (index > bufsize)
+            {
+                bufsize += RL_BUFSIZE;
+                buffer = realloc(buffer, bufsize);
+
+                if (!buffer)
+                {
+                    fprintf(stderr, "namsh: allocation error\n");
+                    exit(EXIT_FAILURE);
+                }
+            }
+
+            buffer[index++] = c;
+            putchar(c);
         }
     }
 
-    return line;
+    disable_raw_mode();
+
+    return buffer;
 }
 
 char** shell_splitline(char* line)

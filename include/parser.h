@@ -6,6 +6,9 @@
 #define TOKEN_BUFSIZE 64 // token buffer
 #define TOKEN_DELIMS " \t\r\n\a" // delimiters 
 
+void enable_raw_mode(void);
+void disable_raw_mode(void);
+
 int launch_child_process(char** args);
 int execute_cmd(char** args);
 char* shell_readline(void);
