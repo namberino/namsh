@@ -2,9 +2,27 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <strings.h>
+#include <termios.h>
+#include <sys/ioctl.h>
 
 #include "parser.h"
 #include "builtin.h"
+
+void enable_raw_mode(void)
+{
+    struct termios term;
+    tcgetattr(STDIN_FILENO, &term);
+    term.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
+
+void disable_raw_mode(void)
+{
+    struct termios term;
+    tcgetattr(STDIN_FILENO, &term);
+    term.c_lflag |= (ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
 
 int launch_child_process(char** args)
 {
@@ -67,23 +85,94 @@ int execute_cmd(char** args)
 
 char* shell_readline(void)
 {
-    char* line = NULL;
-    size_t bufsize = 0;
+    size_t bufsize = 1024;
+    char* buffer = malloc(bufsize);
 
-    if (getline(&line, &bufsize, stdin) == -1)
+    if (!buffer)
     {
-        if (feof(stdin))
+        fprintf(stderr, "namsh: allocation error\n");
+        exit(EXIT_FAILURE);
+    }
+
+    size_t pos = 0;
+    char c;
+
+    enable_raw_mode();
+
+    while (1)
+    {
+        c = getchar();
+
+        if (c == '\n')
         {
-            exit(EXIT_SUCCESS);
-        } 
-        else 
+            buffer[pos] = '\0';
+            putchar('\n');
+            break;
+        }
+        else if (c == '\t')
         {
-            fprintf(stderr, "namsh: readline error\n");
-            exit(EXIT_FAILURE);
+            // tab key handling: insert four spaces
+            if (pos + 4 >= bufsize)
+            {
+                bufsize += 1024;
+                buffer = realloc(buffer, bufsize);
+                
+                if (!buffer)
+                {
+                    fprintf(stderr, "namsh: allocation error\n");
+                    exit(EXIT_FAILURE);
+                }
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                buffer[pos++] = ' ';
+                putchar(' ');
+            }
+        }
+        else if (c == 127)
+        {  // backspace handling (ASCII 127)
+            if (pos > 0)
+            {
+                if (pos >= 4 && strncmp(&buffer[pos - 4], "    ", 4) == 0)
+                {
+                    pos -= 4;
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        putchar('\b');
+                    }
+                }
+                else
+                {
+                    pos--;
+
+                    putchar('\b');
+                }
+            }
+        }
+        else
+        {
+            if (pos >= bufsize)
+            {
+                bufsize += 1024;
+                buffer = realloc(buffer, bufsize);
+
+                if (!buffer)
+                {
+                    fprintf(stderr, "namsh: allocation error\n");
+                    exit(EXIT_FAILURE);
+                }
+            }
+
+            buffer[pos++] = c;
+            putchar(c);
         }
     }
 
-    return line;
+    disable_raw_mode();
+    
+    return buffer;
 }
 
 char** shell_splitline(char* line)
