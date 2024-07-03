@@ -129,6 +129,12 @@ char* shell_readline(void)
                         cursor++;
                     }
                     break;
+
+				case 'A': // up arrow
+					break;
+
+				case 'B': // down arrow
+					break;
             }
         }
         else if (c == '\n') // newline
