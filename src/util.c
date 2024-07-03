@@ -51,7 +51,7 @@ void print_prompt(void)
         }
         else
         {
-            printf("%s%s%s%s@%s%s%s%s%s> ", GREEN, ANSI_BOLD, username, PURPLE, BLUE, relative_cwd, BLUE, ANSI_BOLD, current_dir);
+            printf("%s%s%s%s@%s%s%s%s%s> ", GREEN, ANSI_BOLD, username, PURPLE, BLUE, "/", BLUE, ANSI_BOLD, current_dir);
         }
 
         printf(ANSI_RESET);
