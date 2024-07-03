@@ -96,6 +96,7 @@ char* shell_readline(void)
 
     size_t index = 0;
     char c;
+    size_t cursor = 0; // cursor position in the line
 
     enable_raw_mode();
 
@@ -103,7 +104,40 @@ char* shell_readline(void)
     {
         c = getchar();
 
-        if (c == '\n') // newline
+        if (c == '\033') // escape character for arrow keys
+        {
+            getchar(); // skip the '['
+
+            switch (getchar()) // evaluate which key it is
+            {
+                case 'D': // left arrow
+                    if (cursor > 0)
+                    {
+                        putchar('\033');
+                        putchar('[');
+                        putchar('D');
+                        cursor--;
+                    }
+                    break;
+                
+                case 'C': // right arrow
+                    if (cursor < index)
+                    {
+                        putchar('\033');
+                        putchar('[');
+                        putchar('C');
+                        cursor++;
+                    }
+                    break;
+
+				case 'A': // up arrow
+					break;
+
+				case 'B': // down arrow
+					break;
+            }
+        }
+        else if (c == '\n') // newline
         {
             buffer[index] = '\0';
             putchar('\n');
@@ -128,6 +162,7 @@ char* shell_readline(void)
                 buffer[index++] = ' ';
                 putchar(' ');
             }
+            cursor += 4;
         }
         else if (c == 127) // backspace
         {
@@ -136,6 +171,7 @@ char* shell_readline(void)
                 if (index >= 4 && strncmp(&buffer[index - 4], "    ", 4) == 0)
                 {
                     index -= 4;
+                    cursor -= 4;
 
                     for (int i = 0; i < 4; i++)
                     {
@@ -148,6 +184,7 @@ char* shell_readline(void)
                 else
                 {
                     index--;
+                    cursor--;
                     putchar('\b');
                     putchar(' ');
                     putchar('\b');
@@ -169,6 +206,7 @@ char* shell_readline(void)
             }
 
             buffer[index++] = c;
+            cursor++;
             putchar(c);
         }
     }
