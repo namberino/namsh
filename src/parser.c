@@ -2,29 +2,12 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <strings.h>
-#include <termios.h>
-#include <sys/ioctl.h>
 
 #include "parser.h"
 #include "builtin.h"
 #include "util.h"
 #include "ansi.h"
-
-void enable_raw_mode(void)
-{
-    struct termios term;
-    tcgetattr(STDIN_FILENO, &term);
-    term.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &term);
-}
-
-void disable_raw_mode(void)
-{
-    struct termios term;
-    tcgetattr(STDIN_FILENO, &term);
-    term.c_lflag |= (ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &term);
-}
+#include "autocompletion.h"
 
 int launch_child_process(char** args)
 {
@@ -83,50 +66,6 @@ int execute_cmd(char** args)
 
     // if function is not a builtin function
     return launch_child_process(args);
-}
-
-char** get_matching_commands(char* cmd, int* n)
-{
-    int bufsize = 100;
-    int index = 0;
-    char** matches = malloc(bufsize * sizeof(char*));
-    *n = 0; // number of matches
-
-    if (!matches)
-    {
-        fprintf(stderr, "namsh: allocation error\n");
-        exit(EXIT_FAILURE);
-    }
-
-    for (int i = 0; i < (sizeof(builtin_str) / sizeof(char*)); i++) 
-    {
-        if (strncmp(cmd, builtin_str[i], strlen(cmd)) == 0) 
-        {
-            matches[index++] = strdup(builtin_str[i]);
-
-            if (index >= bufsize) 
-            {
-                bufsize += 100;
-                matches = realloc(matches, bufsize * sizeof(char*));
-
-                if (!matches) 
-                {
-                    fprintf(stderr, "namsh: allocation error\n");
-                    exit(EXIT_FAILURE);
-                }
-            }
-        }
-    }
-    *n = index;
-
-    return matches;
-}
-
-void display_matches(char** matches, int n)
-{
-    printf("\n");
-    for (int i = 0; i < n; i++)
-        printf("\t%s%s%s", ANSI_BOLD, matches[i], ANSI_RESET);
 }
 
 char* shell_readline(void)

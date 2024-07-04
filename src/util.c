@@ -4,6 +4,8 @@
 #include <strings.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <termios.h>
+#include <sys/ioctl.h>
 
 #include "ansi.h"
 
@@ -61,6 +63,22 @@ void print_prompt(void)
     {
         fprintf(stderr, "namsh: cannot get cwd");
     }
+}
+
+void enable_raw_mode(void)
+{
+    struct termios term;
+    tcgetattr(STDIN_FILENO, &term);
+    term.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
+
+void disable_raw_mode(void)
+{
+    struct termios term;
+    tcgetattr(STDIN_FILENO, &term);
+    term.c_lflag |= (ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
 }
 
 int is_empty_str(char* input)
