@@ -8,6 +8,7 @@
 #include "parser.h"
 #include "builtin.h"
 #include "util.h"
+#include "ansi.h"
 
 void enable_raw_mode(void)
 {
@@ -101,13 +102,12 @@ char** get_matching_commands(char* cmd, int* n)
     {
         if (strncmp(cmd, builtin_str[i], strlen(cmd)) == 0) 
         {
-            matches[index] = strdup(builtin_str[i]);
-            index++;
+            matches[index++] = strdup(builtin_str[i]);
 
             if (index >= bufsize) 
             {
                 bufsize += 100;
-                matches = realloc(matches, bufsize * sizeof(char *));
+                matches = realloc(matches, bufsize * sizeof(char*));
 
                 if (!matches) 
                 {
@@ -117,7 +117,6 @@ char** get_matching_commands(char* cmd, int* n)
             }
         }
     }
-
     *n = index;
 
     return matches;
@@ -126,9 +125,7 @@ char** get_matching_commands(char* cmd, int* n)
 void display_matches(char** matches, int n)
 {
     for (int i = 0; i < n; i++)
-    {
-        printf("\n\t%s", matches[i]);
-    }
+        printf("\n\t%s%s%s", ANSI_BOLD, matches[i], ANSI_RESET);
 }
 
 char* shell_readline(void)
@@ -211,9 +208,7 @@ char* shell_readline(void)
                 }
 
                 for (int i = 0; i < n; i++) 
-                {
                     free(matches[i]);
-                }
                 free(matches);
             }
             else
