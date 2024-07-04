@@ -124,8 +124,9 @@ char** get_matching_commands(char* cmd, int* n)
 
 void display_matches(char** matches, int n)
 {
+    printf("\n");
     for (int i = 0; i < n; i++)
-        printf("\n\t%s%s%s", ANSI_BOLD, matches[i], ANSI_RESET);
+        printf("\t%s%s%s", ANSI_BOLD, matches[i], ANSI_RESET);
 }
 
 char* shell_readline(void)
@@ -192,6 +193,7 @@ char* shell_readline(void)
         {
             if (index > 0 && is_empty_str(buffer) == 0)
             {
+                // not increasing the index so when we type again, it will replace the \0
                 buffer[index] = '\0';
 
                 int n;
