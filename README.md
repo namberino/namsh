@@ -4,7 +4,7 @@ A custom shell written in C
 
 There are currently 4 builtin commands: `cd`, `help`, `exit`, and `history`
 
-![shell](docs/img/shell.png)
+![shell](doc/img/shell.png)
 
 # Requirements
 
@@ -22,4 +22,4 @@ There are currently 4 builtin commands: `cd`, `help`, `exit`, and `history`
 
 # Documentation
 
-You can find the documentation for how this project works on the [docs](docs/) directory
+You can find the documentation for how this project works on the [doc](doc/) directory
