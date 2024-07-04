@@ -127,7 +127,7 @@ void display_matches(char** matches, int n)
 {
     for (int i = 0; i < n; i++)
     {
-        printf("\n%s", matches[i]);
+        printf("\n\t%s", matches[i]);
     }
 }
 
@@ -193,7 +193,7 @@ char* shell_readline(void)
         }
         else if (c == '\t') // tab
         {
-            if (index > 0 && strlen(buffer) != 0)
+            if (index > 0 && is_empty_str(buffer) == 0)
             {
                 buffer[index] = '\0';
 
@@ -203,6 +203,11 @@ char* shell_readline(void)
                 if (n > 0)
                 {
                     display_matches(matches, n);
+                    printf("\n\n");
+
+                    print_prompt();
+                    printf("%s", buffer);
+                    fflush(stdout);
                 }
 
                 for (int i = 0; i < n; i++) 
@@ -210,7 +215,6 @@ char* shell_readline(void)
                     free(matches[i]);
                 }
                 free(matches);
-                // buffer[index] = '';
             }
             else
             {
