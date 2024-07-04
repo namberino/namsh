@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "builtin.h"
+#include "ansi.h"
 
 char* builtin_str[4] = {
     "cd",
@@ -38,15 +39,21 @@ int cmd_cd(char** args)
 
 int cmd_help(char** args)
 {
-    printf("Nam's namsh\n\n");
-    printf("The followings are built in:\n");
+    printf("Welcome to %s%snamsh%s, the minimalist shell.\n", ANSI_BOLD, BLUE, ANSI_RESET);
+    printf("%s _   _   ___  ___  ___ _____ _   _ \n", CYAN);
+    printf("| \\ | | / _ \\ |  \\/  |/  ___| | | |\n");
+    printf("|  \\| |/ /_\\ \\| .  . |\\ `--.| |_| |\n");
+    printf("| . ` ||  _  || |\\/| | `--. \\  _  |\n");
+    printf("| |\\  || | | || |  | |/\\__/ / | | |\n");
+    printf("\\_| \\_/\\_| |_/\\_|  |_/\\____/\\_| |_/\n\n%s", ANSI_RESET);
+    printf("The following commands are built into the shell:\n");
 
     for (int i = 0; i < (sizeof(builtin_str) / sizeof(char*)); i++) 
     {
-        printf("  %s\n", builtin_str[i]);
+        printf("%s\t%s\n", GREEN, builtin_str[i]);
     }
 
-    printf("\nUse the \"man\" command for information on other programs\n");
+    printf("%s\nUse the %s%sman%s command to get information on other commands.\n", ANSI_RESET, ANSI_BOLD, ANSI_UNDERLINE, ANSI_RESET);
 
     return 1;
 }
