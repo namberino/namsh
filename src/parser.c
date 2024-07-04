@@ -7,6 +7,7 @@
 
 #include "parser.h"
 #include "builtin.h"
+#include "util.h"
 
 void enable_raw_mode(void)
 {
@@ -83,6 +84,53 @@ int execute_cmd(char** args)
     return launch_child_process(args);
 }
 
+char** get_matching_commands(char* cmd, int* n)
+{
+    int bufsize = 100;
+    int index = 0;
+    char** matches = malloc(bufsize * sizeof(char*));
+    *n = 0; // number of matches
+
+    if (!matches)
+    {
+        fprintf(stderr, "namsh: allocation error\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < (sizeof(builtin_str) / sizeof(char*)); i++) 
+    {
+        if (strncmp(cmd, builtin_str[i], strlen(cmd)) == 0) 
+        {
+            matches[index] = strdup(builtin_str[i]);
+            index++;
+
+            if (index >= bufsize) 
+            {
+                bufsize += 100;
+                matches = realloc(matches, bufsize * sizeof(char *));
+
+                if (!matches) 
+                {
+                    fprintf(stderr, "namsh: allocation error\n");
+                    exit(EXIT_FAILURE);
+                }
+            }
+        }
+    }
+
+    *n = index;
+
+    return matches;
+}
+
+void display_matches(char** matches, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        printf("\n%s", matches[i]);
+    }
+}
+
 char* shell_readline(void)
 {
     size_t bufsize = RL_BUFSIZE;
@@ -145,24 +193,46 @@ char* shell_readline(void)
         }
         else if (c == '\t') // tab
         {
-            if (index + 4 > bufsize)
+            if (index > 0 && strlen(buffer) != 0)
             {
-                bufsize += RL_BUFSIZE;
-                buffer = realloc(buffer, bufsize);
+                buffer[index] = '\0';
 
-                if (!buffer)
+                int n;
+                char** matches = get_matching_commands(buffer, &n);
+
+                if (n > 0)
                 {
-                    fprintf(stderr, "namsh: allocation error\n");
-                    exit(EXIT_FAILURE);
+                    display_matches(matches, n);
                 }
-            }
 
-            for (int i = 0; i < 4; i++)
-            {
-                buffer[index++] = ' ';
-                putchar(' ');
+                for (int i = 0; i < n; i++) 
+                {
+                    free(matches[i]);
+                }
+                free(matches);
+                // buffer[index] = '';
             }
-            cursor += 4;
+            else
+            {
+                if (index + 4 > bufsize)
+                {
+                    bufsize += RL_BUFSIZE;
+                    buffer = realloc(buffer, bufsize);
+
+                    if (!buffer)
+                    {
+                        fprintf(stderr, "namsh: allocation error\n");
+                        exit(EXIT_FAILURE);
+                    }
+                }
+
+                for (int i = 0; i < 4; i++)
+                {
+                    buffer[index++] = ' ';
+                    putchar(' ');
+                }
+                cursor += 4;
+            }
         }
         else if (c == 127) // backspace
         {
