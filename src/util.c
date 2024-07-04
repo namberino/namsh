@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
+#include <ctype.h>
 #include <unistd.h>
 
 #include "ansi.h"
@@ -60,4 +61,14 @@ void print_prompt(void)
     {
         fprintf(stderr, "namsh: cannot get cwd");
     }
+}
+
+int is_empty_str(char* input)
+{
+    for (int i = 0; i < strlen(input); i++)
+    {
+        if (!isspace(input[i]))
+            return 0;
+    }
+    return 1;
 }
